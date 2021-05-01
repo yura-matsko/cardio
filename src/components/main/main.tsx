@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 import { Header } from '../header';
-import { Patients } from '../patients'
+import { Patients } from '../patients';
 
 const Main = () => {
-  return (
-    <>
-      <Header />
-      <Patients />
-    </>
-  )
-}
+    return (
+        <>
+            <Header />
+            <Patients />
+        </>
+    );
+};
 
 export default Main;
