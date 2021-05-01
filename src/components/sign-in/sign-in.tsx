@@ -31,12 +31,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+interface ISignIn {
+  email: string | null
+  password: string | null
+}
+
 const SignIn = () => {
   const classes = useStyles();
-  const [form, setForm] = useState({})
+  const [form, setForm] = useState<ISignIn>({
+    email: null,
+    password: null,
+  })
   
-  const handleInputChange = (event) => {
-    const { target: { name, value } } = event
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { currentTarget: { name, value } } = event
 
     setForm({
       ...form,
@@ -44,9 +52,7 @@ const SignIn = () => {
     })
   }
 
-  const signInWithEmailAndPasswordHandler = async (e) => {
-    e.preventDefault()
-    
+  const signInWithEmailAndPasswordHandler = async () => {
     const { email, password } = form
 
     if (!email || !password) {

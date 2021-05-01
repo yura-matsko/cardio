@@ -6,7 +6,9 @@ import {
 } from "react-router-dom";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { SignIn } from '../sign-in'
+import { Main } from '../main'
 
 import { auth } from '../../firebase'
 
@@ -30,14 +32,18 @@ const App = () => {
   }
 
   return (
-    user ?
-      <h1>Hello</h1>
-      :
-      <Router>
-        <Route path="/">
-          <SignIn />
-        </Route>
-    </Router>
+    <>
+      <CssBaseline />
+      {user ?
+        <Main />
+        :
+        <Router>
+          <Route path="/">
+            <SignIn />
+          </Route>
+        </Router>
+      }
+      </>
   );
 }
 
