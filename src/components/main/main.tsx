@@ -26,6 +26,9 @@ const Main = (): JSX.Element => {
                     <Route path="/new-patient">
                         <CreatePatient />
                     </Route>
+                    <Route path="/patient/:id">
+                        <h1>Wuup wupp</h1>
+                    </Route>
                     <Route path="/">
                         <Patients />
                     </Route>

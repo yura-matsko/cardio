@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import { ISignIn } from '../../interfaces';
 import { auth } from '../../firebase';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -30,11 +31,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         margin: theme.spacing(3, 0, 2),
     },
 }));
-
-interface ISignIn {
-    email: string | null;
-    password: string | null;
-}
 
 const SignIn = (): JSX.Element => {
     const classes = useStyles();
@@ -109,7 +105,14 @@ const SignIn = (): JSX.Element => {
                         autoComplete="current-password"
                         onChange={handleInputChange}
                     />
-                    <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+                    <Button
+                        type="submit"
+                        size="large"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                    >
                         Войти
                     </Button>
                 </form>
