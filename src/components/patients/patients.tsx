@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { v4 } from 'uuid';
@@ -11,12 +13,21 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import { firestore } from '../../firebase';
 
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        container: {
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(3),
+        },
+    }),
+);
+
 const Patients = (): JSX.Element => {
     const [patiens, setPatients] = useState<any>([]);
-    const [visits, setVisits] = useState<any>([]);
 
     const handleGet = async () => {
         const snapshot = await firestore.collection('patients').get();
@@ -84,6 +95,8 @@ const Patients = (): JSX.Element => {
         });
     };
 
+    const classes = useStyles();
+
     return (
         <>
             <Grid container direction="row" justify="space-between" alignItems="center">
@@ -92,7 +105,7 @@ const Patients = (): JSX.Element => {
                     Сознать нового пациента
                 </Button>
             </Grid>
-            <TableContainer component={Paper}>
+            <TableContainer className={classes.container} component={Paper}>
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
