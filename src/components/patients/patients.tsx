@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { v4 } from 'uuid';
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+
 import { firestore } from '../../firebase';
 
-const Patients = () => {
+const Patients = (): JSX.Element => {
     const [patiens, setPatients] = useState<any>([]);
     const [visits, setVisits] = useState<any>([]);
 
@@ -51,11 +55,14 @@ const Patients = () => {
 
     return (
         <>
+            <Grid container direction="row" justify="space-between" alignItems="center">
+                <Typography variant="h3">Пациенты</Typography>
+                <Button component={Link} to="/new-patient" variant="contained" color="secondary">
+                    Сознать нового пациента
+                </Button>
+            </Grid>
             <Button onClick={handleGet} variant="contained">
                 Все пациенты
-            </Button>
-            <Button onClick={handleCreate} variant="contained" color="secondary">
-                Сознать нового пациента
             </Button>
             <Button onClick={handleVisit} variant="contained" color="primary">
                 Сознать новый визит

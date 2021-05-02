@@ -9,7 +9,7 @@ import { Main } from '../main';
 
 import { auth } from '../../firebase';
 
-const App = () => {
+const App = (): JSX.Element => {
     const [user, setUser] = useState<firebase.User | null>(null);
     const [loader, setLoader] = useState<boolean>(true);
 
@@ -31,15 +31,15 @@ const App = () => {
     return (
         <>
             <CssBaseline />
-            {user ? (
-                <Main />
-            ) : (
-                <Router>
+            <Router>
+                {user ? (
+                    <Main />
+                ) : (
                     <Route path="/">
                         <SignIn />
                     </Route>
-                </Router>
-            )}
+                )}
+            </Router>
         </>
     );
 };

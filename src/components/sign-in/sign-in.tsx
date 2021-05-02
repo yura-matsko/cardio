@@ -6,12 +6,12 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
 import { auth } from '../../firebase';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
+        width: '100%',
         marginTop: theme.spacing(1),
     },
     submit: {
@@ -36,7 +36,7 @@ interface ISignIn {
     password: string | null;
 }
 
-const SignIn = () => {
+const SignIn = (): JSX.Element => {
     const classes = useStyles();
     const [form, setForm] = useState<ISignIn>({
         email: null,
@@ -54,7 +54,9 @@ const SignIn = () => {
         });
     };
 
-    const signInWithEmailAndPasswordHandler = async () => {
+    const signInWithEmailAndPasswordHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
         const { email, password } = form;
 
         if (!email || !password) {
@@ -63,6 +65,10 @@ const SignIn = () => {
 
         try {
             await auth.signInWithEmailAndPassword(email, password);
+            setForm({
+                email: null,
+                password: null,
+            });
         } catch (error) {
             console.log(error);
         }
@@ -76,16 +82,16 @@ const SignIn = () => {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign in
+                    Войти
                 </Typography>
-                <form className={classes.form} noValidate>
+                <form className={classes.form} noValidate onSubmit={signInWithEmailAndPasswordHandler}>
                     <TextField
                         variant="outlined"
                         margin="normal"
                         required
                         fullWidth
                         id="email"
-                        label="Email Address"
+                        label="E-mail"
                         name="email"
                         autoComplete="email"
                         autoFocus
@@ -97,21 +103,14 @@ const SignIn = () => {
                         required
                         fullWidth
                         name="password"
-                        label="Password"
+                        label="Пароль"
                         type="password"
                         id="password"
                         autoComplete="current-password"
                         onChange={handleInputChange}
                     />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                        onClick={signInWithEmailAndPasswordHandler}
-                    >
-                        Sign In
+                    <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+                        Войти
                     </Button>
                 </form>
             </div>
