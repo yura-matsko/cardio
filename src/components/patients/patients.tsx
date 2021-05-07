@@ -1,21 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { v4 } from 'uuid';
+import MUIDataTable from 'mui-datatables';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-import { firestore } from '../../firebase';
+import { getCollection } from '../../api';
+import { formatDate } from '../../utils';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -26,59 +20,107 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
+const columns = [
+    {
+        name: 'name',
+        label: 'ФИО',
+        options: {
+            filter: true,
+            sort: true,
+        },
+    },
+    {
+        name: 'birthDate',
+        label: 'Дата рождения',
+        options: {
+            filter: true,
+            sort: false,
+        },
+    },
+    {
+        name: 'phone',
+        label: 'Телефон',
+        options: {
+            filter: true,
+            sort: false,
+        },
+    },
+    {
+        name: 'address',
+        label: 'Адрес',
+        options: {
+            filter: true,
+            sort: false,
+        },
+    },
+    {
+        name: 'height',
+        label: 'Рост',
+        options: {
+            filter: true,
+            sort: false,
+        },
+    },
+    {
+        name: 'weight',
+        label: 'Вес',
+        options: {
+            filter: true,
+            sort: false,
+        },
+    },
+    {
+        name: 'bodyArea',
+        label: 'S пов.тела',
+        options: {
+            filter: true,
+            sort: false,
+        },
+    },
+];
+
 const Patients = (): JSX.Element => {
+    const history = useHistory();
+    const [response, setResponse] = useState<any>([]);
     const [patiens, setPatients] = useState<any>([]);
 
     const handleGet = async () => {
-        const snapshot = await firestore.collection('patients').get();
+        const response = await getCollection('patients');
 
-        const data = snapshot.docs
-            .map((doc) => doc.data())
-            .reduce((acc: any, item: any) => {
-                const {
-                    lastName,
-                    firstName,
-                    fatherName,
-                    birthDate,
-                    phone,
-                    postalCode,
-                    street,
-                    city,
-                    houseNumber,
-                    appartment,
-                    height,
-                    weight,
-                    bodyArea,
-                } = item;
+        const patients = response.reduce((acc: any, item: any) => {
+            const {
+                lastName,
+                firstName,
+                fatherName,
+                birthDate,
+                phone,
+                postalCode,
+                street,
+                city,
+                houseNumber,
+                appartment,
+                height,
+                weight,
+                bodyArea,
+                id,
+            } = item;
 
-                const mapped = {
-                    name: `${lastName} ${firstName} ${fatherName}`,
-                    address: `${postalCode}, ${city}, ${street}, д. ${houseNumber}, кв. ${appartment}`,
-                    birthDate,
-                    phone,
-                    height,
-                    weight,
-                    bodyArea,
-                };
+            const mapped = {
+                name: `${lastName} ${firstName} ${fatherName}`,
+                address: `${postalCode}, ${city}, ${street}, д. ${houseNumber}, кв. ${appartment}`,
+                birthDate: formatDate(birthDate),
+                phone,
+                height,
+                weight,
+                bodyArea,
+                id,
+            };
 
-                return [mapped, ...acc];
-            }, []);
+            return [...acc, mapped];
+        }, []);
 
-        setPatients(data);
-    };
-
-    const getVisits = async () => {
-        if (!patiens.length) {
-            return;
-        }
-
-        const visitsRef = await firestore.collection('visits');
-
-        const snapshot = await visitsRef.where('patientId', '==', patiens[1]?.id).get();
-
-        console.log(snapshot.docs.map((doc) => doc.data()));
-
-        //setVisits(query.docs.map(doc => doc.data()))
+        setResponse(response);
+        setPatients(patients);
     };
 
     useEffect(() => {
@@ -87,54 +129,32 @@ const Patients = (): JSX.Element => {
         })();
     }, []);
 
-    const handleVisit = () => {
-        firestore.collection('visits').add({
-            id: v4(),
-            patientId: patiens[1].id,
-            createdAt: new Date().getTime(),
-        });
+    const classes = useStyles();
+
+    const handleRowClick = (_: any, rowMeta: any) => {
+        const user = response[rowMeta.rowIndex];
+
+        if (!user) return;
+
+        history.push(`/patient/${user.id}`);
     };
 
-    const classes = useStyles();
+    const options = {
+        pagination: false,
+        print: false,
+        download: false,
+        selectableRows: 'none',
+        onRowClick: handleRowClick,
+    };
 
     return (
         <>
-            <Grid container direction="row" justify="space-between" alignItems="center">
-                <Typography variant="h3">Пациенты</Typography>
+            <MUIDataTable title="Пациенты" columns={columns} data={patiens} options={options as any} />
+            <Grid className={classes.container} container direction="row" justify="flex-end" alignItems="center">
                 <Button component={Link} to="/new-patient" size="large" variant="contained" color="secondary">
                     Сознать нового пациента
                 </Button>
             </Grid>
-            <TableContainer className={classes.container} component={Paper}>
-                <Table aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>ФИО</TableCell>
-                            <TableCell>Дата рождения</TableCell>
-                            <TableCell>Телефон</TableCell>
-                            <TableCell>Адрес</TableCell>
-                            <TableCell>Рост</TableCell>
-                            <TableCell>Вес</TableCell>
-                            <TableCell>S пов.тела</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {patiens.map((row: any) => (
-                            <TableRow key={row.name}>
-                                <TableCell component="th" scope="row">
-                                    {row.name}
-                                </TableCell>
-                                <TableCell>{row.birthDate}</TableCell>
-                                <TableCell>{row.phone}</TableCell>
-                                <TableCell>{row.address}</TableCell>
-                                <TableCell>{row.height}</TableCell>
-                                <TableCell>{row.weight}</TableCell>
-                                <TableCell>{row.bodyArea}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
         </>
     );
 };

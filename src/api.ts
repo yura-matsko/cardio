@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import { firestore } from './firebase';
 
-interface IQuery {
+export interface IQuery {
     fieldPath: string | firebase.firestore.FieldPath;
     opStr: firebase.firestore.WhereFilterOp;
     value: string;
@@ -17,8 +17,21 @@ export const getCollection = async (collection: string): Promise<Array<Record<st
     return mapSnapshot(snapshot);
 };
 
-export const addCollection = async (collection: string, payload: Record<string, unknown>): Promise<void> => {
-    await firestore.collection(collection).add(payload);
+export const updateDocument = async (
+    collection: string,
+    id: string,
+    payload: Record<string, unknown | number>,
+): Promise<void> => {
+    const doc = await firestore.collection(collection).doc(id);
+
+    doc.update(payload);
+};
+
+export const addDocument = async (collection: string, payload: Record<string, unknown | number>): Promise<void> => {
+    await firestore
+        .collection(collection)
+        .doc(payload.id as string)
+        .set(payload);
 };
 
 export const queryCollection = async (collection: string, query: IQuery): Promise<Array<Record<string, unknown>>> => {

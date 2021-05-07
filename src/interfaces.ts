@@ -10,7 +10,7 @@ export interface IPatient {
     lastName: string | undefined;
     fatherName: string | undefined;
     birthDate: number | null;
-    gender: genderType;
+    gender: string;
     phone: number | undefined;
     postalCode: number | undefined;
     city: string | undefined;

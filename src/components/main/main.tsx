@@ -5,6 +5,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Header } from '../header';
 import { CreatePatient } from '../create-patient';
 import { Patients } from '../patients';
+import { Patient } from '../patient';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -27,7 +28,7 @@ const Main = (): JSX.Element => {
                         <CreatePatient />
                     </Route>
                     <Route path="/patient/:id">
-                        <h1>Wuup wupp</h1>
+                        <Patient />
                     </Route>
                     <Route path="/">
                         <Patients />
