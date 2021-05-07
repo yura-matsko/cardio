@@ -27,6 +27,13 @@ export const updateDocument = async (
     doc.update(payload);
 };
 
+export const deleteDocument = async (collection: string, id: string): Promise<void> => {
+    await firestore
+        .collection(collection)
+        .doc(id as string)
+        .delete();
+};
+
 export const addDocument = async (collection: string, payload: Record<string, unknown | number>): Promise<void> => {
     await firestore
         .collection(collection)

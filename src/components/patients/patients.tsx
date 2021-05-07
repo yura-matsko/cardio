@@ -151,7 +151,7 @@ const Patients = (): JSX.Element => {
         <>
             <MUIDataTable title="Пациенты" columns={columns} data={patiens} options={options as any} />
             <Grid className={classes.container} container direction="row" justify="flex-end" alignItems="center">
-                <Button component={Link} to="/new-patient" size="large" variant="contained" color="secondary">
+                <Button component={Link} to="/new-patient" size="large" variant="contained" color="primary">
                     Сознать нового пациента
                 </Button>
             </Grid>

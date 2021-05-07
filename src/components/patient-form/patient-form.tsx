@@ -115,7 +115,6 @@ const PatientForm = ({ initialValue, editForm, onEdit }: PatientFormProps): JSX.
             }
 
             const id = v4();
-
             await addDocument('patients', { id, ...form });
 
             history.push(`patient/${id}`);

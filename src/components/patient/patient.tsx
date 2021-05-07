@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -9,13 +9,16 @@ import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { PatientForm } from '../patient-form';
 
-import { queryCollection, IQuery } from '../../api';
+import { queryCollection, deleteDocument, IQuery } from '../../api';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         container: {
             marginTop: theme.spacing(3),
             marginBottom: theme.spacing(3),
+        },
+        btn: {
+            marginRight: theme.spacing(3),
         },
     }),
 );
@@ -24,6 +27,7 @@ const Patient = (): JSX.Element => {
     const [patient, setPatient] = useState<any>(null);
     const [edit, setEdit] = useState<boolean>(false);
     const params = useParams<any>();
+    const history = useHistory();
 
     const handleGet = async () => {
         const query = {
@@ -38,6 +42,16 @@ const Patient = (): JSX.Element => {
     };
 
     const handleEdit = () => setEdit(!edit);
+
+    const handleDelete = async () => {
+        try {
+            await deleteDocument('patients', params?.id);
+
+            history.push(`/`);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
         (async () => {
@@ -61,9 +75,20 @@ const Patient = (): JSX.Element => {
             <Grid container direction="row" justify="space-between" alignItems="center">
                 <Typography variant="h3">Карта пациента</Typography>
                 {!edit ? (
-                    <Button onClick={handleEdit} size="large" variant="contained" color="secondary">
-                        Редактировать
-                    </Button>
+                    <div>
+                        <Button
+                            onClick={handleDelete}
+                            className={classes.btn}
+                            variant="contained"
+                            size="large"
+                            color="secondary"
+                        >
+                            Удалить
+                        </Button>
+                        <Button onClick={handleEdit} size="large" variant="contained">
+                            Редактировать
+                        </Button>
+                    </div>
                 ) : null}
             </Grid>
             <div className={classes.container}>
