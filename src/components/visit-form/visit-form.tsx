@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-import { calculateIndexToBSA, calculateMyocardialMass } from '../../math';
+import { calculateIndexToBSA, calculateMyocardialMass, calculateUO, calculateFVSimpson, calculateFU } from '../../math';
 
 import AOSection from './ao-section';
 import LPSection from './lp-section';
@@ -58,7 +58,7 @@ const defaultForm = {
     mmToBSA: '',
     ots: '',
     fvSimpson: '',
-    si: '',
+    mokToBSA: '',
 };
 
 type VisitFormProps = {
@@ -77,18 +77,33 @@ const reducer = (state: any, { type, name, value }: ACTIONTYPE) => {
             return { ...state, [name]: value };
 
         case 'CALCULATE':
-            const { mzhp, kdr, zs } = state;
+            const { mzhp, kdr, zs, kdo, kso, ksr } = state;
             const result = {} as Record<string, string>;
+
+            console.log(state);
 
             if (mzhp && kdr && zs) {
                 result.mm = calculateMyocardialMass(mzhp, kdr, zs);
+            }
+
+            if (kdo && kso) {
+                console.log(calculateUO(kdo, kso));
+                result.uo = calculateUO(kdo, kso);
+            }
+
+            if (result.uo && kdo) {
+                result.fvSimpson = calculateFVSimpson(result.uo, kdo);
+            }
+
+            if (kdr && ksr) {
+                result.fu = calculateFU(kdr, ksr);
             }
 
             return { ...state, ...result };
 
         case 'CALCULATE_INDEXES':
             if (!value) return;
-            const absoluteValues = ['sinus', 'peresheek', 'vosh', 'volume', 'kdo', 'uo', 'mm'] as string[];
+            const absoluteValues = ['sinus', 'peresheek', 'vosh', 'volume', 'kdo', 'uo', 'mm', 'mok'] as string[];
             const calculateIndexes = absoluteValues.reduce(
                 (acc, item: string) => ({
                     [`${item}ToBSA`]: calculateIndexToBSA(state[item], value),

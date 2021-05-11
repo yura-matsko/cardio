@@ -337,11 +337,11 @@ const LZHSection = ({ form, onChange }: IVisitFormSection): JSX.Element => {
                     <TextField
                         variant="outlined"
                         margin="dense"
-                        value={form.si}
+                        value={form.mokToBSA}
                         fullWidth
                         label="СИ (В)"
-                        name="si"
-                        autoComplete="si"
+                        name="mokToBSA"
+                        autoComplete="mokToBSA"
                         type="number"
                         autoFocus
                         onChange={onChange}

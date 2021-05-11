@@ -22,3 +22,7 @@ export const calculateMyocardialMass = (mzhp: string, kdr: string, zs: string): 
 };
 
 export const calculateUO = (kdo: string, kso: string): string => (Number(kdo) - Number(kso)).toFixed(0);
+
+export const calculateFVSimpson = (uo: string, kdo: string): string => ((Number(uo) / Number(kdo)) * 100).toFixed(0);
+
+export const calculateFU = (kdr: string, ksr: string): string => ((Number(kdr) - Number(ksr)) / Number(kdr)).toFixed(0);
