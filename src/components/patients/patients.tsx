@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import MUIDataTable from 'mui-datatables';
+import { useHistory, Link } from 'react-router-dom';
+import firebase from 'firebase/app';
+import MUIDataTable, { MUIDataTableOptions } from 'mui-datatables';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import { getCollection } from '../../api';
 import { formatDate } from '../../utils';
+import { IPatientMapped } from '../../interfaces';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -81,13 +80,13 @@ const columns = [
 
 const Patients = (): JSX.Element => {
     const history = useHistory();
-    const [response, setResponse] = useState<any>([]);
-    const [patiens, setPatients] = useState<any>([]);
+    const [response, setResponse] = useState<firebase.firestore.DocumentData[]>([]);
+    const [patiens, setPatients] = useState<IPatientMapped[]>([]);
 
     const handleGet = async () => {
         const response = await getCollection('patients');
 
-        const patients = response.reduce((acc: any, item: any) => {
+        const patients = response.reduce((acc: IPatientMapped[], item): IPatientMapped[] => {
             const {
                 lastName,
                 firstName,
@@ -114,9 +113,9 @@ const Patients = (): JSX.Element => {
                 weight,
                 bodyArea,
                 id,
-            };
+            } as IPatientMapped;
 
-            return [...acc, mapped];
+            return [...acc, mapped] as IPatientMapped[];
         }, []);
 
         setResponse(response);
@@ -131,7 +130,9 @@ const Patients = (): JSX.Element => {
 
     const classes = useStyles();
 
-    const handleRowClick = (_: any, rowMeta: any) => {
+    const handleRowClick = (_: string[], rowMeta: { dataIndex: number; rowIndex: number }) => {
+        if (!response) return;
+
         const user = response[rowMeta.rowIndex];
 
         if (!user) return;
@@ -149,7 +150,7 @@ const Patients = (): JSX.Element => {
 
     return (
         <>
-            <MUIDataTable title="Пациенты" columns={columns} data={patiens} options={options as any} />
+            <MUIDataTable title="Пациенты" columns={columns} data={patiens} options={options as MUIDataTableOptions} />
             <Grid className={classes.container} container direction="row" justify="flex-end" alignItems="center">
                 <Button component={Link} to="/new-patient" size="large" variant="contained" color="primary">
                     Сознать нового пациента

@@ -1,21 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { PatientForm } from '../patient-form';
+import { VisitForm } from '../visit-form';
 
 import { queryCollection, deleteDocument, IQuery } from '../../api';
+import { IPatient } from '../../interfaces';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         container: {
             marginTop: theme.spacing(3),
-            marginBottom: theme.spacing(3),
+            marginBottom: theme.spacing(4),
         },
         btn: {
             marginRight: theme.spacing(3),
@@ -24,9 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Patient = (): JSX.Element => {
-    const [patient, setPatient] = useState<any>(null);
+    const [patient, setPatient] = useState<IPatient | null>(null);
     const [edit, setEdit] = useState<boolean>(false);
-    const params = useParams<any>();
+    const params = useParams<{ id: string } | null>();
     const history = useHistory();
 
     const handleGet = async () => {
@@ -38,7 +37,7 @@ const Patient = (): JSX.Element => {
 
         const response = await queryCollection('patients', query);
 
-        setPatient(response[0]);
+        setPatient(response[0] as IPatient);
     };
 
     const handleEdit = () => setEdit(!edit);
@@ -63,17 +62,15 @@ const Patient = (): JSX.Element => {
 
     if (!patient)
         return (
-            <Container component="main" maxWidth="lg">
-                <Typography gutterBottom variant="h4">
-                    Не удалось опознать пациента, это точно не Джейсон Борн?
-                </Typography>
-            </Container>
+            <Typography gutterBottom variant="h4">
+                Не удалось опознать пациента, это точно не Джейсон Борн?
+            </Typography>
         );
 
     return (
-        <Container component="main" maxWidth="lg">
+        <>
             <Grid container direction="row" justify="space-between" alignItems="center">
-                <Typography variant="h3">Карта пациента</Typography>
+                <Typography variant="h4">Карта пациента</Typography>
                 {!edit ? (
                     <div>
                         <Button
@@ -94,7 +91,11 @@ const Patient = (): JSX.Element => {
             <div className={classes.container}>
                 <PatientForm initialValue={patient} editForm={edit} onEdit={handleEdit} />
             </div>
-        </Container>
+            <VisitForm bodyArea={patient?.bodyArea as string} />
+            <Grid container direction="row" justify="space-between" alignItems="center">
+                <Typography variant="h4">История</Typography>
+            </Grid>
+        </>
     );
 };
 

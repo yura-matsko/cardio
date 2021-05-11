@@ -22,7 +22,7 @@ const Main = (): JSX.Element => {
     return (
         <>
             <Header />
-            <Container className={classes.container}>
+            <Container component="main" maxWidth="lg" className={classes.container}>
                 <Switch>
                     <Route path="/new-patient">
                         <CreatePatient />

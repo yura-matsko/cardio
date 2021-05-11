@@ -11,7 +11,7 @@ export const mapSnapshot = (
     snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>,
 ): firebase.firestore.DocumentData[] => snapshot.docs.map((doc) => doc.data());
 
-export const getCollection = async (collection: string): Promise<Array<Record<string, unknown>>> => {
+export const getCollection = async (collection: string): Promise<firebase.firestore.DocumentData[]> => {
     const snapshot = await firestore.collection(collection).get();
 
     return mapSnapshot(snapshot);
@@ -27,7 +27,9 @@ export const updateDocument = async (
     doc.update(payload);
 };
 
-export const deleteDocument = async (collection: string, id: string): Promise<void> => {
+export const deleteDocument = async (collection: string, id: string | undefined): Promise<void> => {
+    if (!id) return;
+
     await firestore
         .collection(collection)
         .doc(id as string)
@@ -41,7 +43,10 @@ export const addDocument = async (collection: string, payload: Record<string, un
         .set(payload);
 };
 
-export const queryCollection = async (collection: string, query: IQuery): Promise<Array<Record<string, unknown>>> => {
+export const queryCollection = async (
+    collection: string,
+    query: IQuery,
+): Promise<firebase.firestore.DocumentData[]> => {
     const { fieldPath, opStr, value } = query;
 
     const ref = await firestore.collection(collection);

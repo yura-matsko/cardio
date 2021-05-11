@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import 'date-fns';
 import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
 type PatientFormProps = {
     initialValue?: IPatient | null;
     editForm?: boolean;
-    onEdit?: any;
+    onEdit?: () => void;
 };
 
 const defaultForm = {
@@ -51,7 +50,7 @@ const defaultForm = {
     appartment: undefined,
     height: undefined,
     weight: undefined,
-    bodyArea: 0,
+    bodyArea: undefined,
 };
 
 const PatientForm = ({ initialValue, editForm, onEdit }: PatientFormProps): JSX.Element => {
@@ -59,7 +58,7 @@ const PatientForm = ({ initialValue, editForm, onEdit }: PatientFormProps): JSX.
     const classes = useStyles();
     const [form, setForm] = useState<IPatient>(initialValue || defaultForm);
 
-    const params = useParams<any>();
+    const params = useParams<{ id: string } | null>();
 
     const readOnly = !!initialValue && !editForm;
 
@@ -107,7 +106,7 @@ const PatientForm = ({ initialValue, editForm, onEdit }: PatientFormProps): JSX.
         event.preventDefault();
 
         try {
-            if (params.id) {
+            if (params?.id && onEdit) {
                 await updateDocument('patients', params.id, { ...form });
                 onEdit();
 

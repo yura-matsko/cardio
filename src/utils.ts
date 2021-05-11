@@ -7,4 +7,8 @@ export const generateFullName = (firstName?: string, lastName?: string, fatherNa
     return [firstName, lastName, fatherName].filter(Boolean).join(' ');
 };
 
-export const formatDate = (date: number): string => format(new Date(date), DateFormat.Default);
+export const formatDate = (date: number | null): string | void => {
+    if (!date) return;
+
+    return format(new Date(date), DateFormat.Default);
+};
